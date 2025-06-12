@@ -3,7 +3,7 @@ source /opt/buildpiper/shell-functions/functions.sh
 source /opt/buildpiper/shell-functions/log-functions.sh
 
 export BUILD_REPOSITORY_TAG=$(getRepositoryTag)
-export DOCKER_LINK=$(getComponentName)
+export DOCKER_URL=$(getComponentName)
 
 IMAGE_TAG="${BUILD_REPOSITORY_TAG:-latest}"
 
@@ -29,7 +29,6 @@ docker_hub_push_image() {
   DECODED=$(echo "$AUTH_TOKEN" | base64 -d 2>/dev/null)
   USERNAME=$(echo "$DECODED" | cut -d':' -f1)
   PASSWORD=$(echo "$DECODED" | cut -d':' -f2-)
-  DOCKER_URL=$(echo "$DOCKER_LINK" | sed "s|docker.io/|docker.io/${USERNAME}/|")
 
   echo "Docker push url $DOCKER_URL"
 
@@ -55,7 +54,6 @@ fi
 
   echo "Pushing image to Docker Hub..."
   docker push "${DOCKER_URL}:${IMAGE_TAG}"
-
   if [ $? -eq 0 ]; then
     echo "Image pushed successfully: ${DOCKER_URL}:${IMAGE_TAG}"
   else
